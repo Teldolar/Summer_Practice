@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
             cir[2] = new circle("Right", Brushes.Yellow, new Point(-50, 350), true);
             cir[3] = new circle("Left", Brushes.Purple, new Point(985, 350), false);
         }
-        
+
         private void stop(object sender, EventArgs e)
         {
             timer1.Enabled = false;
@@ -39,7 +39,7 @@ namespace WindowsFormsApp1
         {
             timer1.Enabled = true;
             StartProcess(cir[0], cir[1]);
-            StartProcess(cir[3], cir[2]);   
+            StartProcess(cir[3], cir[2]);
             Invalidate();
         }
         private void StartProcess(circle a, circle b)
@@ -77,8 +77,8 @@ namespace WindowsFormsApp1
             stop = stopcircle;
         }
         public void draw(Graphics context)
-        { 
-            context.FillEllipse(color, new Rectangle(position, size)); 
+        {
+            context.FillEllipse(color, new Rectangle(position, size));
         }
         public void Move()
         {
@@ -115,3 +115,4 @@ namespace WindowsFormsApp1
         }
     }
 }
+/*Test*/
