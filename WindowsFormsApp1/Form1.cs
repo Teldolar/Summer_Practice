@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        int i = 0;
         circle[] cir;
         MainMenu MnMen1;
         MenuItem pnkt1;
@@ -16,12 +17,10 @@ namespace WindowsFormsApp1
             pnkt2 = new MenuItem("Стоп", new EventHandler(stop), Shortcut.Alt2);
             MnMen1 = new MainMenu(new MenuItem[] { pnkt1, pnkt2 });
             this.Menu = MnMen1;
-
-            cir = new circle[4];
-            cir[0] = new circle("Right",Brushes.Red, new Point(-50, 250),false);
-            cir[1] = new circle("Left", Brushes.Blue, new Point(985, 250),true);
-            cir[2] = new circle("Right", Brushes.Yellow, new Point(-50, 350), true);
-            cir[3] = new circle("Left", Brushes.Purple, new Point(985, 350), false);
+            cir = new circle[3];
+            cir[0] = new circle(new Point(0, 200));
+            cir[1] = new circle(new Point(900, 250));
+            cir[2] = new circle(new Point(0, 300));
         }
 
         private void stop(object sender, EventArgs e)
@@ -33,87 +32,111 @@ namespace WindowsFormsApp1
             cir[0].draw(e.Graphics);
             cir[1].draw(e.Graphics);
             cir[2].draw(e.Graphics);
-            cir[3].draw(e.Graphics);
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = true;
-            StartProcess(cir[0], cir[1]);
-            StartProcess(cir[3], cir[2]);
+            StartProcess();
             Invalidate();
         }
-        private void StartProcess(circle a, circle b)
+        private void StartProcess()
         {
-            if (b.stop == true)
+
+            if(cir[i].beginpos.X==0&& cir[i].position.X == 900)
             {
-                a.stop = false;
-                a.Move();
+
+                cir[i].EventMoveLeft -= cir[i].MoveLeft;
+                cir[i].EventMoveRight -= cir[i].MoveRight;
+                switch (i)
+                {
+                    case 2:
+                        i = 0;
+                        break;
+                    default:
+                        i++;
+                        break;
+                }
             }
-            if (a.stop == true)
+            if (cir[i].beginpos.X == 900 && cir[i].position.X == 0)
             {
-                b.stop = false;
-                b.Move();
+                cir[i].EventMoveLeft -= cir[i].MoveLeft;
+                cir[i].EventMoveRight -= cir[i].MoveRight;
+                switch (i)
+                {
+                    case 2:
+                        i = 0;
+                        break;
+                    default:
+                        i++;
+                        break;
+                }
+            }
+            if (cir[i].beginpos.X == cir[i].position.X)
+            {
+                cir[i].EventMoveLeft += cir[i].MoveLeft;
+                cir[i].EventMoveRight += cir[i].MoveRight;
+                cir[i].StartMoving();
+            }
+            else
+            {
+                cir[i].StartMoving();
             }
         }
     }
     class circle
     {
-        string direction;
-        Point position;
+        public Point position;
         Brush color;
         Size size;
+        public Point beginpos;
 
-        public bool stop;
-        public event StopMoveDelegate EventStopMoving;
-        public delegate void StopMoveDelegate();
+        public event MoveRightDelegate EventMoveRight;
+        public delegate void MoveRightDelegate();
 
-        public circle(string newdirection,Brush brush,Point beginposition,bool stopcircle)
+        public event MoveLeftDelegate EventMoveLeft;
+        public delegate void MoveLeftDelegate();
+
+        public circle(Point beginposition)
         {
-            EventStopMoving += StopMoving;
-            this.color = brush;
+
+            this.color = Brushes.Red;
             this.size = new Size(50, 50);
             position = beginposition;
-            direction = newdirection;
-            stop = stopcircle;
+            beginpos = beginposition;
         }
         public void draw(Graphics context)
         {
             context.FillEllipse(color, new Rectangle(position, size));
         }
-        public void Move()
-        {
-            if (direction=="Right")
-            {
-                position.X += 5;
-                if (position.X >= 985 && stop==false)
-                {
-                    EventStopMoving();
-                }
-            }
-            else
-            {
-                position.X += -5;
-                if (position.X <= -50 && stop==false)
-                {
-                    EventStopMoving();
-                }
-            }
 
-        }
-        public void StopMoving()
+        public void StartMoving()
         {
-            if (direction == "Right")
+            if(beginpos.X==0)
             {
-                position.X = -50;
-                stop = true;
+                if (position.X == 900)
+                {
+                    beginpos.X = 900;
+                }
+                EventMoveRight();
+
             }
             else
             {
-                position.X = 985;
-                stop = true;
+                if (position.X == 0)
+                {
+                    beginpos.X = 0;
+                }
+                EventMoveLeft();
+
             }
+        }
+        public void MoveRight()
+        {
+            position.X += 50;
+        }
+        public void MoveLeft()
+        {
+            position.X -= 50;
         }
     }
 }
-/*Test*/
-//Test 2
