@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 namespace WindowsFormsApp1
@@ -39,39 +39,17 @@ namespace WindowsFormsApp1
             StartProcess();
             Invalidate();
         }
-        private void StartProcess()
+        private void StartProcess(circle a, circle b)
         {
-
-            if(cir[i].beginpos.X==0&& cir[i].position.X == 900)
+            if (b.stop == true)
             {
-                cir[i].beginpos.X=cir[i].position.X;
-                switch (i)
-                {
-                    case 2:
-                        i = 0;
-                        break;
-                    default:
-                        i++;
-                        break;
-                }
+                a.stop = false;
+                a.Move();
             }
-            if (cir[i].beginpos.X == 900 && cir[i].position.X == 0)
+            if (a.stop == true)
             {
-                cir[i].beginpos.X=cir[i].position.X;
-                switch (i)
-                {
-                    case 2:
-                        i = 0;
-                        break;
-                    default:
-                        i++;
-                        break;
-                }
-            }
-            else
-            {
-                
-                cir[i].StartMoving();
+                b.stop = false;
+                b.Move();
             }
         }
     }
@@ -80,19 +58,15 @@ namespace WindowsFormsApp1
         public Point position;
         Brush color;
         Size size;
-        public Point beginpos;
 
-        public event MoveRightDelegate EventMoveRight;
-        public delegate void MoveRightDelegate();
+        public bool stop;
+        public event StopMoveDelegate EventStopMoving;
+        public delegate void StopMoveDelegate();
 
-        public event MoveLeftDelegate EventMoveLeft;
-        public delegate void MoveLeftDelegate();
-
-        public circle(Point beginposition)
+        public circle(string newdirection,Brush brush,Point beginposition,bool stopcircle)
         {
-            EventMoveLeft = MoveLeft;
-            EventMoveRight=MoveRight;
-            this.color = Brushes.Red;
+            EventStopMoving += StopMoving;
+            this.color = brush;
             this.size = new Size(50, 50);
             position = beginposition;
             beginpos = beginposition;
@@ -106,25 +80,36 @@ namespace WindowsFormsApp1
         {
             if(beginpos.X==0)
             {
-                
-                EventMoveRight();
-                   
+                position.X += 5;
+                if (position.X >= 985 && stop==false)
+                {
+                    EventStopMoving();
+                }
             }
             else
             {
-                
-                
-                EventMoveLeft();
-                
+                position.X += -5;
+                if (position.X <= -50 && stop==false)
+                {
+                    EventStopMoving();
+                }
             }
+
         }
-        public void MoveRight()
+        public void StopMoving()
         {
-            position.X += 25;
-        }
-        public void MoveLeft()
-        {
-            position.X -= 25;
+            if (direction == "Right")
+            {
+                position.X = -50;
+                stop = true;
+            }
+            else
+            {
+                position.X = 985;
+                stop = true;
+            }
         }
     }
 }
+/*Test*/
+//Test 2
