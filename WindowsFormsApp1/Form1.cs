@@ -44,9 +44,7 @@ namespace WindowsFormsApp1
 
             if(cir[i].beginpos.X==0&& cir[i].position.X == 900)
             {
-                
-                cir[i].EventMoveLeft -= cir[i].MoveLeft;
-                cir[i].EventMoveRight -= cir[i].MoveRight;
+                cir[i].beginpos.X=cir[i].position.X;
                 switch (i)
                 {
                     case 2:
@@ -59,8 +57,7 @@ namespace WindowsFormsApp1
             }
             if (cir[i].beginpos.X == 900 && cir[i].position.X == 0)
             {
-                cir[i].EventMoveLeft -= cir[i].MoveLeft;
-                cir[i].EventMoveRight -= cir[i].MoveRight;
+                cir[i].beginpos.X=cir[i].position.X;
                 switch (i)
                 {
                     case 2:
@@ -71,14 +68,9 @@ namespace WindowsFormsApp1
                         break;
                 }
             }
-            if (cir[i].beginpos.X == cir[i].position.X)
-            {
-                cir[i].EventMoveLeft += cir[i].MoveLeft;
-                cir[i].EventMoveRight += cir[i].MoveRight;
-                cir[i].StartMoving();
-            }
             else
             {
+                
                 cir[i].StartMoving();
             }
         }
@@ -98,7 +90,8 @@ namespace WindowsFormsApp1
 
         public circle(Point beginposition)
         {
-            
+            EventMoveLeft = MoveLeft;
+            EventMoveRight=MoveRight;
             this.color = Brushes.Red;
             this.size = new Size(50, 50);
             position = beginposition;
@@ -113,30 +106,25 @@ namespace WindowsFormsApp1
         {
             if(beginpos.X==0)
             {
-                if (position.X == 900)
-                {
-                    beginpos.X = 900;
-                }
-                EventMoveRight();
                 
+                EventMoveRight();
+                   
             }
             else
             {
-                if (position.X == 0)
-                {
-                    beginpos.X = 0;
-                }
+                
+                
                 EventMoveLeft();
                 
             }
         }
         public void MoveRight()
         {
-            position.X += 50;
+            position.X += 25;
         }
         public void MoveLeft()
         {
-            position.X -= 50;
+            position.X -= 25;
         }
     }
 }
