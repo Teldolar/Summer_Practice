@@ -106,16 +106,13 @@ namespace WindowsFormsApp1
         {
             if(beginpos.X==0)
             {
-                
-                EventMoveRight();
-                   
+                this.color = Brushes.Red;
+                EventMoveRight(); 
             }
             else
             {
-                
-                
-                EventMoveLeft();
-                
+                this.color = Brushes.Blue;
+                EventMoveLeft(); 
             }
         }
         public void MoveRight()
