@@ -88,7 +88,6 @@ namespace WindowsFormsApp1
                 if (position.X >= 985 && stop==false)
                 {
                     EventStopMoving();
-                    stop = true;
                 }
             }
             else
@@ -97,7 +96,6 @@ namespace WindowsFormsApp1
                 if (position.X <= -50 && stop==false)
                 {
                     EventStopMoving();
-                    stop = true;
                 }
             }
 
@@ -107,10 +105,12 @@ namespace WindowsFormsApp1
             if (direction == "Right")
             {
                 position.X = -50;
+                stop = true;
             }
             else
             {
                 position.X = 985;
+                stop = true;
             }
         }
     }
