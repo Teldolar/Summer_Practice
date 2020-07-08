@@ -21,6 +21,8 @@ namespace WindowsFormsApp1
             cir[0] = new circle(new Point(0, 200));
             cir[1] = new circle(new Point(900, 250));
             cir[2] = new circle(new Point(0, 300));
+            cir[0].EventMoveLeft+=cir[0].MoveLeft;
+            cir[0].EventMoveRight+=cir[0].MoveRight;
         }
 
         private void stop(object sender, EventArgs e)
@@ -42,37 +44,29 @@ namespace WindowsFormsApp1
         private void StartProcess()
         {
 
-            if(cir[i].beginpos.X==0&& cir[i].position.X == 900)
+            if((cir[i].beginpos.X==0&& cir[i].position.X == 900)||(cir[i].beginpos.X == 900 && cir[i].position.X == 0))
             {
-                cir[i].beginpos.X=cir[i].position.X;
-                switch (i)
-                {
-                    case 2:
-                        i = 0;
-                        break;
-                    default:
-                        i++;
-                        break;
-                }
-            }
-            if (cir[i].beginpos.X == 900 && cir[i].position.X == 0)
-            {
-                cir[i].beginpos.X=cir[i].position.X;
-                switch (i)
-                {
-                    case 2:
-                        i = 0;
-                        break;
-                    default:
-                        i++;
-                        break;
-                }
-            }
-            else
-            {
+                cir[i].EventMoveLeft-=cir[i].MoveLeft;
+                cir[i].EventMoveRight-=cir[i].MoveRight;
                 
-                cir[i].StartMoving();
+                switch (i)
+                {
+                    case 2:
+                        
+                        cir[0].EventMoveLeft+=cir[0].MoveLeft;
+                        cir[0].EventMoveRight+=cir[0].MoveRight;
+                        i = 0;
+                        break;
+                    default:
+                       
+                        cir[i+1].EventMoveLeft+=cir[i+1].MoveLeft;
+                        cir[i+1].EventMoveRight+=cir[i+1].MoveRight;
+                         i++;
+                        break;
+                }
+                cir[i].beginpos.X=cir[i].position.X;
             }
+            cir[i].StartMoving();
         }
     }
     class circle
@@ -90,8 +84,6 @@ namespace WindowsFormsApp1
 
         public circle(Point beginposition)
         {
-            EventMoveLeft = MoveLeft;
-            EventMoveRight=MoveRight;
             this.color = Brushes.Red;
             this.size = new Size(50, 50);
             position = beginposition;
