@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 namespace WindowsFormsApp1
 {
@@ -25,6 +26,7 @@ namespace WindowsFormsApp1
             cir[0].stopmoving+=cir[1].StartMoving;
             cir[1].stopmoving+=cir[2].StartMoving;
             cir[2].stopmoving+=cir[0].StartMoving;
+            DoubleBuffered = true;
         }
         private void stop(object sender, EventArgs e)
         {
@@ -76,11 +78,11 @@ namespace WindowsFormsApp1
             {
                 if(direction=="Right")
                 {
-                    position.X+=10;
+                    position.X+=1;
                 }
                 if(direction=="Left")
                 {
-                    position.X-=10;
+                    position.X-=1;
                 }
                 if(direction=="Right"&&position.X==930)
                 {
