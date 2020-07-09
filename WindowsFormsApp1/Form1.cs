@@ -20,7 +20,7 @@ namespace WindowsFormsApp1
             this.Menu = MnMen1;
             cir = new circle[3];
             cir[0] = new circle(new Point(0, 200),"Right",false,Brushes.Red);
-            cir[1] = new circle(new Point(933, 250),"Left",true,Brushes.Blue);
+            cir[1] = new circle(new Point(930, 250),"Left",true,Brushes.Blue);
             cir[2] = new circle(new Point(0, 300),"Right",true,Brushes.Red);
             cir[0].stopmoving+=cir[1].StartMoving;
             cir[1].stopmoving+=cir[2].StartMoving;
@@ -48,9 +48,6 @@ namespace WindowsFormsApp1
             cir[2].Moving();
             Invalidate();
         }
-        private void StartProcess()
-        {
-        }
     }
     class circle
     {
@@ -67,7 +64,6 @@ namespace WindowsFormsApp1
             this.size = new Size(50, 50);
             position = beginposition;
             direction = Direction;
-            stopmoving+=StopMoving;
             stop=Stop;
         }
         public void draw(Graphics context)
@@ -86,23 +82,21 @@ namespace WindowsFormsApp1
                 {
                     position.X-=10;
                 }
-                if(direction=="Right"&&position.X==933)
+                if(direction=="Right"&&position.X==930)
                 {
                     color=Brushes.Blue;
                     stopmoving();
+                    stop=true;
                     direction="Left";   
                 }
                 if(direction=="Left"&&position.X==0)
                 {
                     color=Brushes.Red;
                     stopmoving();
+                    stop=true;
                     direction="Right";
                 }
             }
-        }
-        public void StopMoving()
-        {
-            stop=true;
         }
         public void StartMoving()
         {
