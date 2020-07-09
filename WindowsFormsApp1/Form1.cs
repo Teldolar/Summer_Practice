@@ -17,14 +17,13 @@ namespace WindowsFormsApp1
             MnMen1 = new MainMenu(new MenuItem[] { pnkt1, pnkt2 });
             this.Menu = MnMen1;
             cir = new circle[3];
-            cir[0] = new circle(new Point(0, 200),"Right",false);
-            cir[1] = new circle(new Point(930, 250),"Left",true);
-            cir[2] = new circle(new Point(0, 300),"Right",true);
+            cir[0] = new circle(new Point(0, 200),"Right",false,Brushes.Red);
+            cir[1] = new circle(new Point(933, 250),"Left",true,Brushes.Blue);
+            cir[2] = new circle(new Point(0, 300),"Right",true,Brushes.Red);
             cir[0].stopmoving+=cir[1].StartMoving;
             cir[1].stopmoving+=cir[2].StartMoving;
             cir[2].stopmoving+=cir[0].StartMoving;
         }
-
         private void stop(object sender, EventArgs e)
         {
             timer1.Enabled = false;
@@ -38,14 +37,13 @@ namespace WindowsFormsApp1
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = true;
-            StartProcess();
+            cir[0].Moving();
+            cir[1].Moving();
+            cir[2].Moving();
             Invalidate();
         }
         private void StartProcess()
         {
-            cir[0].Moving();
-            cir[1].Moving();
-            cir[2].Moving();
         }
     }
     class circle
@@ -57,10 +55,9 @@ namespace WindowsFormsApp1
         public event StopMovingDelegate stopmoving;
         public delegate void StopMovingDelegate();
         string direction;
-
-        public circle(Point beginposition, string Direction, bool Stop)
+        public circle(Point beginposition, string Direction, bool Stop, Brush Color)
         {
-            this.color = Brushes.Red;
+            this.color = Color;
             this.size = new Size(50, 50);
             position = beginposition;
             direction = Direction;
@@ -83,13 +80,15 @@ namespace WindowsFormsApp1
                 {
                     position.X-=10;
                 }
-                if(direction=="Right"&&position.X==930)
+                if(direction=="Right"&&position.X==933)
                 {
+                    color=Brushes.Blue;
                     stopmoving();
-                    direction="Left";
+                    direction="Left";   
                 }
                 if(direction=="Left"&&position.X==0)
                 {
+                    color=Brushes.Red;
                     stopmoving();
                     direction="Right";
                 }
