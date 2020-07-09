@@ -5,7 +5,6 @@ namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        int i = 0;
         circle[] cir;
         MainMenu MnMen1;
         MenuItem pnkt1;
@@ -18,15 +17,12 @@ namespace WindowsFormsApp1
             MnMen1 = new MainMenu(new MenuItem[] { pnkt1, pnkt2 });
             this.Menu = MnMen1;
             cir = new circle[3];
-            cir[0] = new circle(new Point(0, 200));
-            cir[1] = new circle(new Point(900, 250));
-            cir[2] = new circle(new Point(0, 300));
-            cir[0].EventMoveLeft+=cir[0].MoveLeft;
-            cir[0].EventMoveRight+=cir[0].MoveRight;
-            cir[1].EventMoveLeft+=cir[1].MoveLeft;
-            cir[1].EventMoveRight+=cir[1].MoveRight;
-            cir[2].EventMoveLeft+=cir[2].MoveLeft;
-            cir[2].EventMoveRight+=cir[2].MoveRight;
+            cir[0] = new circle(new Point(0, 200),"Right",false);
+            cir[1] = new circle(new Point(930, 250),"Left",true);
+            cir[2] = new circle(new Point(0, 300),"Right",true);
+            cir[0].stopmoving+=cir[1].StartMoving;
+            cir[1].stopmoving+=cir[2].StartMoving;
+            cir[2].stopmoving+=cir[0].StartMoving;
         }
 
         private void stop(object sender, EventArgs e)
@@ -43,27 +39,13 @@ namespace WindowsFormsApp1
         {
             timer1.Enabled = true;
             StartProcess();
-
-            
             Invalidate();
         }
         private void StartProcess()
         {
-            
-            if((cir[i].beginpos.X==0&& cir[i].position.X == 900)||(cir[i].beginpos.X == 900 && cir[i].position.X == 0))
-            {
-                switch (i)
-                {
-                    case 2:
-                        i = 0;
-                        break;
-                    default:
-                         i++;
-                        break;
-                }
-                cir[i].beginpos.X=cir[i].position.X;
-            }
-            cir[i].StartMoving();
+            cir[0].Moving();
+            cir[1].Moving();
+            cir[2].Moving();
         }
     }
     class circle
@@ -71,46 +53,55 @@ namespace WindowsFormsApp1
         public Point position;
         Brush color;
         Size size;
-        public Point beginpos;
+        bool stop;
+        public event StopMovingDelegate stopmoving;
+        public delegate void StopMovingDelegate();
+        string direction;
 
-        public event MoveRightDelegate EventMoveRight;
-        public delegate void MoveRightDelegate();
-
-        public event MoveLeftDelegate EventMoveLeft;
-        public delegate void MoveLeftDelegate();
-
-        public circle(Point beginposition)
+        public circle(Point beginposition, string Direction, bool Stop)
         {
             this.color = Brushes.Red;
             this.size = new Size(50, 50);
             position = beginposition;
-            beginpos = beginposition;
+            direction = Direction;
+            stopmoving+=StopMoving;
+            stop=Stop;
         }
         public void draw(Graphics context)
         {
             context.FillEllipse(color, new Rectangle(position, size));
         }
-
+        public void Moving()
+        {
+            if(stop==false)
+            {
+                if(direction=="Right")
+                {
+                    position.X+=10;
+                }
+                if(direction=="Left")
+                {
+                    position.X-=10;
+                }
+                if(direction=="Right"&&position.X==930)
+                {
+                    stopmoving();
+                    direction="Left";
+                }
+                if(direction=="Left"&&position.X==0)
+                {
+                    stopmoving();
+                    direction="Right";
+                }
+            }
+        }
+        public void StopMoving()
+        {
+            stop=true;
+        }
         public void StartMoving()
         {
-            if(beginpos.X==0)
-            {
-                this.color = Brushes.Red;
-                EventMoveRight(); 
-            }
-            else
-            {
-                this.color = Brushes.Blue;
-                EventMoveLeft(); 
-            }
-        }
-        public void MoveRight()
-        {
-            position.X += 25;
-        }
-        public void MoveLeft()
-        {
-            position.X -= 25;
+            stop=false;
         }
     }
 }
