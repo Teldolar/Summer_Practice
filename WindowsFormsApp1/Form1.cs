@@ -1,108 +1,82 @@
 using System;
-using System.Drawing;
-using System.Threading;
+using System.Media;
 using System.Windows.Forms;
+
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        circle[] cir;
+        Time[] Objects;
         MainMenu MnMen1;
         MenuItem pnkt1;
         MenuItem pnkt2;
-        MenuItem info;
         public Form1()
         {
             InitializeComponent();
             pnkt1 = new MenuItem("Пуск", new EventHandler(timer1_Tick), Shortcut.Alt1);
             pnkt2 = new MenuItem("Стоп", new EventHandler(stop), Shortcut.Alt2);
-            info = new MenuItem("Информация о разработчике", new EventHandler(InfoORazrabotchik), Shortcut.Alt3);
-            MnMen1 = new MainMenu(new MenuItem[] { pnkt1, pnkt2, info });
+            MnMen1 = new MainMenu(new MenuItem[] { pnkt1, pnkt2 });
             this.Menu = MnMen1;
-            cir = new circle[3];
-            cir[0] = new circle(new Point(0, 200),"Right",false,Brushes.Red);
-            cir[1] = new circle(new Point(933, 250),"Left",true,Brushes.Blue);
-            cir[2] = new circle(new Point(0, 300),"Right",true,Brushes.Red);
-            cir[0].stopmoving+=cir[1].StartMoving;
-            cir[1].stopmoving+=cir[2].StartMoving;
-            cir[2].stopmoving+=cir[0].StartMoving;
-            DoubleBuffered = true;
+            Objects = new Time[2];
+            Objects[0] = new Time(10, false);
+            Objects[1] = new Time(5, true);
+            Objects[0].stoptime += Objects[1].StartTimer;
+            Objects[1].stoptime += Objects[0].StartTimer;
         }
         private void stop(object sender, EventArgs e)
         {
             timer1.Enabled = false;
         }
-        private void InfoORazrabotchik(object sender, EventArgs e)
-        {
-            MessageBox.Show("Выполнил: студент группы 4208\nГареев А.И.\nВариант работы: 3", "Информация о разработчике");
-        }
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            cir[0].draw(e.Graphics);
-            cir[1].draw(e.Graphics);
-            cir[2].draw(e.Graphics);
-        }
         private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = true;
-            cir[0].Moving();
-            cir[1].Moving();
-            cir[2].Moving();
+            Objects[0].NewTime();
+            Objects[1].NewTime();
             Invalidate();
         }
     }
-    class circle
+    class Time
     {
-        public Point position;
-        Brush color;
-        Size size;
+
+
         bool stop;
-        public event StopMovingDelegate stopmoving;
-        public delegate void StopMovingDelegate();
-        string direction;
-        public circle(Point beginposition, string Direction, bool Stop, Brush Color)
+        int count = 0;
+        int Minutes;
+        public event StopTime stoptime;
+        public delegate void StopTime();
+        public Time(int minutes, bool bool_)
         {
-            this.color = Color;
-            this.size = new Size(50, 50);
-            position = beginposition;
-            direction = Direction;
-            stop=Stop;
+            Minutes = minutes;
+            stop = bool_;
         }
-        public void draw(Graphics context)
+        public void NewTime()
         {
-            context.FillEllipse(color, new Rectangle(position, size));
-        }
-        public void Moving()
-        {
-            if(stop==false)
+
+            if (stop == false)
             {
-                if(direction=="Right")
+                if (count == 0)
                 {
-                    position.X+=1;
+                    playSimpleSound();
                 }
-                if(direction=="Left")
+                count++;
+                if (count == Minutes)
                 {
-                    position.X-=1;
-                }
-                if(direction=="Right"&&position.X==933)
-                {
-                    color=Brushes.Blue;
-                    stopmoving();
-                    stop=true;
-                    direction="Left";   
-                }
-                if(direction=="Left"&&position.X==0)
-                {
-                    color=Brushes.Red;
-                    stopmoving();
-                    stop=true;
-                    direction="Right";
+
+                    stoptime();
+                    count = 0;
+                    stop = true;
                 }
             }
         }
-        public void StartMoving()
+        public void StartTimer()
         {
-            stop=false;
+            stop = false;
+        }
+        private void playSimpleSound()
+        {
+            SoundPlayer simpleSound = new SoundPlayer();
+            simpleSound.Stream = Properties.Resources.sound;
+            simpleSound.Play();
         }
     }
 }
